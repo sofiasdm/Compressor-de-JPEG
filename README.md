@@ -1,6 +1,6 @@
 # Compressor de Imagens JPEG-like em Python
 
-Projeto 1VA da disciplina **14710 - Arquiteturas Não-Convencionais** (UFRPE), Prof. Vítor A. Coutinho.
+Projeto 1VA da disciplina **- Arquiteturas Não-Convencionais** (UFRPE), Prof. Vítor A. Coutinho.
 
 ## Sobre o projeto
 
@@ -57,40 +57,3 @@ Arquivos gerados em `resultados/`:
 - `psnr_bpp.png` e `ssim_bpp.png`: gráficos de taxa e distorção
 - `comparacao.png`: original e reconstruídas lado a lado
 - `tabela.txt`: tabela de síntese (s, bpp, % zeros, PSNR, SSIM, tempos e speedup)
-
-## Como executar
-
-1. Instale as bibliotecas:
-
-```
-pip install -r requirements.txt
-```
-
-2. Rode o programa (usa `imagens/gata.png` por padrão):
-
-```
-python main.py
-```
-
-Para usar outra imagem:
-
-```
-python main.py imagens/outra_foto.png
-```
-
-Os resultados aparecem no terminal e na pasta `resultados/`. Os gráficos também abrem em janelas no final. O programa pode levar 1 ou 2 minutos em imagens grandes.
-
-## Decisões de implementação
-
-- A conversão RGB para YCrCb é feita com a matriz da equação (1), usando só o canal Y.
-- A imagem é convertida para `float64` antes de subtrair 128, para evitar overflow de `uint8`.
-- O padding usa a replicação das bordas e é removido no final da reconstrução.
-- O bpp usa as dimensões originais da imagem, sem contar o padding.
-- A porcentagem de coeficientes zero considera todos os coeficientes quantizados.
-- A DCT rápida usa `norm="ortho"` para ter a mesma normalização da matricial.
-- O PSNR é calculado diretamente. O SSIM usa a função do `skimage` com `data_range=255`.
-
-## Observações
-
-- Em alguns valores de `s`, as imagens das versões A e B podem diferir muito pouco no PSNR e no SSIM. As duas DCTs diferem em torno de 1e-13, o que pode mudar o arredondamento de alguns coeficientes na quantização.
-- O speedup medido pode ser menor que 1. Isso acontece porque `C @ bloco @ C.T` com blocos de 8x8 já roda em código compilado do NumPy, e a chamada da função rápida tem overhead. Esse ponto faz parte da discussão pedida no enunciado.
